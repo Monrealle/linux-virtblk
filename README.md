@@ -1,7 +1,8 @@
 # Linux Virtual Block Device Module
 Разработка виртуального блочного устройства в ядре Linux — учебная практика, 1 курс, Технологии программирования, Математико-механический факультет.
 
-![CI](https://github.com/Monrealle/linux-virtblk/actions/workflows/build-and-lint.yml/badge.svg) ![CI](https://github.com/Monrealle/linux-virtblk/actions/workflows/test.yml/badge.svg)
+![CI](https://github.com/Monrealle/linux-virtblk/actions/workflows/build-and-lint.yml/badge.svg)
+![Test](https://github.com/Monrealle/linux-virtblk/actions/workflows/test.yml/badge.svg)
 
 ## Описание
 Модуль ядра Linux, реализующий виртуальное блочное устройство `/dev/ram_virtblk`, которое хранит данные в оперативной памяти. Устройство ведёт себя как обычный диск: поддерживает форматирование, монтирование и файловые операции — данные при этом хранятся в RAM и теряются при выгрузке модуля.
@@ -29,6 +30,19 @@ sudo dnf install gcc make kernel-devel kernel-headers
 git clone https://github.com/Monrealle/linux-virtblk
 cd linux-virtblk/src
 make
+```
+
+## Использование
+
+```bash
+# Загрузить модуль
+sudo insmod src/virtblk.ko
+
+# Проверить что устройство появилось
+lsblk | grep ram_virtblk
+
+# Выгрузить модуль
+sudo rmmod virtblk
 ```
 
 ## Тестирование
