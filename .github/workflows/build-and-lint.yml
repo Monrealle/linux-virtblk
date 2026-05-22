@@ -1,0 +1,39 @@
+name: Build and Lint
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y perl linux-headers-$(uname -r)
+
+      - name: Download checkpatch.pl
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/torvalds/linux/master/scripts/checkpatch.pl \
+            -o checkpatch.pl
+          curl -fsSL \
+            https://raw.githubusercontent.com/torvalds/linux/master/scripts/spelling.txt \
+            -o spelling.txt
+          chmod +x checkpatch.pl
+
+      - name: Lint (checkpatch.pl)
+        run: |
+          find ./src -name '*.c' -o -name '*.h' \
+            | xargs -I{} ./checkpatch.pl --no-tree --show-types -f {}
+
+      - name: Build kernel module
+        run: |
+          make -C src
