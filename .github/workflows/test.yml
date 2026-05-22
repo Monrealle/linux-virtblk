@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check kernel version
+        run: |
+          KERNEL=$(uname -r)
+          echo "Running on kernel: $KERNEL"
+          if [ "$KERNEL" != "6.18.13-200.fc43.x86_64" ]; then
+            echo "ERROR: expected 6.18.13-200.fc43.x86_64, got $KERNEL"
+            exit 1
+          fi
+
+      - name: Build kernel module
+        run: |
+          make -C src
+
+      - name: Run tests
+        run: |
+          chmod +x test/test.sh
+          cd test && bash test.sh
