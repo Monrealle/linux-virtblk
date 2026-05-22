@@ -50,11 +50,16 @@ cd test && bash test.sh
 ## Структура проекта
 
 ```
-.
+linux-virtblk
+├── .github/workflows/
+│   ├── build-and-lint.yml  - сборка и проверка стиля кода (CI)
+│   └── test.yml            - запуск тестов (self-hosted runner)
 ├── src/
-│   ├── virtblk.c       - исходный код модуля
-│   └── Makefile        - сборка модуля
-├── .gitignore          - игнорируемые файлы
-├── LICENSE             - лицензия
-└── README.md           - этот файл
+│   ├── virtblk.c           - исходный код модуля
+│   └── Makefile            - сборка модуля
+├── test/
+│   └── test.sh             - тесты устройства
+├── .gitignore              - игнорируемые файлы
+├── LICENSE                 - лицензия
+└── README.md               - этот файл
 ```
