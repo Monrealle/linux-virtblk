@@ -37,6 +37,13 @@ jobs:
           find ./src -name '*.c' -o -name '*.h' \
             | xargs -I{} ./checkpatch.pl --no-tree --fix-inplace -f {} || true
 
+      - name: Commit fixes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git diff --quiet || git commit -am "ci: auto-fix codestyle via checkpatch"
+          git push
+
       - name: Lint (checkpatch.pl)
         run: |
           find ./src -name '*.c' -o -name '*.h' \
