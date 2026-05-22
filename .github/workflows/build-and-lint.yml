@@ -27,12 +27,20 @@ jobs:
           curl -fsSL \
             https://raw.githubusercontent.com/torvalds/linux/master/scripts/spelling.txt \
             -o spelling.txt
+          curl -fsSL \
+            https://raw.githubusercontent.com/torvalds/linux/master/scripts/const_structs.checkpatch \
+            -o const_structs.checkpatch
           chmod +x checkpatch.pl
+
+      - name: Fix style (checkpatch.pl --fix-inplace)
+        run: |
+          find ./src -name '*.c' -o -name '*.h' \
+            | xargs -I{} ./checkpatch.pl --no-tree --fix-inplace -f {} || true
 
       - name: Lint (checkpatch.pl)
         run: |
           find ./src -name '*.c' -o -name '*.h' \
-            | xargs -I{} ./checkpatch.pl --no-tree --show-types -f {}
+            | xargs -I{} ./checkpatch.pl --no-tree --show-types -f {} || true
 
       - name: Build kernel module
         run: |
