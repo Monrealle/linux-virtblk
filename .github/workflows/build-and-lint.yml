@@ -43,7 +43,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git diff --quiet || git commit -am "ci: auto-fix codestyle via checkpatch"
+          git diff --quiet || git commit -am "CI: auto-fix codestyle"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
 
       - name: Lint (checkpatch.pl)
