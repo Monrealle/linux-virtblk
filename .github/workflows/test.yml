@@ -22,6 +22,7 @@ jobs:
 
       - name: Build kernel module
         run: |
+          make -C src clean
           make -C src
 
       - name: Run tests
