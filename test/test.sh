@@ -8,7 +8,7 @@ cleanup() {
     echo "===== Выгрузка модуля ====="
     sudo umount /mnt/ramtest 2>/dev/null || true
     sudo rmmod virtblk    2>/dev/null || true
-    rm -f /tmp/snapshot.bin
+    sudo rm -f /tmp/snapshot.bin
 }
 trap cleanup EXIT
 
