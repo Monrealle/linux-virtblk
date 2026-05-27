@@ -169,9 +169,7 @@ static int __init ram_virtblk_init(void)
 	/* vzalloc - выделяет память в виртуально непрерывном адресном пространстве ядра                                             */
 	/* Используем vzalloc а не kmalloc потому что vzalloc не требует физически непрерывной памяти, что важно для больших буферов */
 	ram_data = vzalloc(DEVICE_SIZE);
-	if (!ram_data) {
-		pr_err("%s: couldn't allocate RAM (%d bytes)\n",
-		       DEVICE_NAME, DEVICE_SIZE);
+	if (!ram_data)
 		return -ENOMEM;
 	}
 

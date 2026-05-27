@@ -23,7 +23,7 @@ jobs:
         id: lint
         run: |
           set -o pipefail
-          find ./src \( -name '*.c' -o -name '*.h' \) -print0 \
+          find ./src \( -name '*.c' -o -name '*.h' \) ! -name '*.mod.c' -print0 \
             | xargs -r -0 ./scripts/checkpatch/checkpatch.pl --no-tree --show-types -f \
             | tee checkpatch-report.txt
 
