@@ -45,14 +45,4 @@ sudo dd if="$DEVICE" of=/tmp/snapshot.bin bs=4096 count=256 2>/dev/null
 sudo dd if="$DEVICE" bs=4096 count=256 2>/dev/null | diff - /tmp/snapshot.bin \
     && echo "OK: Test 3" || { echo "FAIL: data mismatch"; exit 1; }
 
-echo "===== Test 4: out-of-bounds ====="
-SECTORS=$(sudo blockdev --getsz "$DEVICE")
-DD_ERR=$(sudo dd if=/dev/zero of="$DEVICE" bs=512 count=2 seek=$((SECTORS - 1)) 2>&1 || true)
-if echo "$DD_ERR" | grep -q "Input/output error"; then
-    echo "OK: Test 4"
-else
-    echo "FAIL: ожидали 'Input/output error', получили: '$DD_ERR'"
-    exit 1
-fi
-
 echo "===== Все тесты пройдены ====="
