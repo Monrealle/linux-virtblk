@@ -46,7 +46,7 @@ sudo dd if="$DEVICE" bs=4096 count=256 2>/dev/null | diff - /tmp/snapshot.bin \
     && echo "OK: Test 3" || { echo "FAIL: data mismatch"; exit 1; }
 
 echo "===== Test 4: out-of-bounds ====="
-DD_ERR=$(sudo dd if=/dev/zero of="$DEVICE" bs=512 count=1 seek=2048 2>&1 || true)
+DD_ERR=$(sudo dd if=/dev/zero of="$DEVICE" bs=512 count=1 seek=200000 2>&1 || true)
 if echo "$DD_ERR" | grep -q "Input/output error"; then
     echo "OK: Test 4"
 else
