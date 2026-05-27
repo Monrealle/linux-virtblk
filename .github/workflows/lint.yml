@@ -1,0 +1,60 @@
+name: Lint
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y perl
+
+      - name: Lint (checkpatch.pl)
+        id: lint
+        run: |
+          set -o pipefail
+          find ./src \( -name '*.c' -o -name '*.h' \) -print0 \
+            | xargs -r -0 ./scripts/checkpatch/checkpatch.pl --no-tree --show-types -f \
+            | tee checkpatch-report.txt
+
+      - name: Show fix instructions
+        if: failure() && steps.lint.outcome == 'failure'
+        run: |
+          cat << 'EOF'
+          checkpatch нашёл нарушения стиля кода.
+
+          1. Посмотрите что именно нарушено:
+
+               find ./src \( -name '*.c' -o -name '*.h' \) -print0 \
+                 | xargs -r -0 ./scripts/checkpatch/checkpatch.pl --no-tree --show-types -f
+
+          2. Попробуйте автоисправление:
+
+               find ./src \( -name '*.c' -o -name '*.h' \) -print0 \
+                 | xargs -r -0 ./scripts/checkpatch/checkpatch.pl --no-tree --fix-inplace -f
+
+               git diff
+               git add -u
+               git commit -m "Fix checkpatch warnings"
+          EOF
+
+      - name: Upload checkpatch report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkpatch-report
+          path: checkpatch-report.txt
+
+  test:
+    needs: lint
+    uses: ./.github/workflows/test.yml

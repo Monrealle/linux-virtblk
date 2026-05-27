@@ -165,9 +165,9 @@ static int __init ram_virtblk_init(void)
 		.physical_block_size = SECTOR_SIZE,
 	};
 
-	/* 1. Выделяем RAM под данные                                                                */
-	/* vzalloc - выделяет память в виртуально непрерывном адресном пространстве ядра             */
-	/* Используем vzalloc а не kmalloc потому что 1 MiB больше максимального размера для kmalloc */
+	/* 1. Выделяем RAM под данные                                                                                                */
+	/* vzalloc - выделяет память в виртуально непрерывном адресном пространстве ядра                                             */
+	/* Используем vzalloc а не kmalloc потому что vzalloc не требует физически непрерывной памяти, что важно для больших буферов */
 	ram_data = vzalloc(DEVICE_SIZE);
 	if (!ram_data) {
 		pr_err("%s: couldn't allocate RAM (%d bytes)\n",

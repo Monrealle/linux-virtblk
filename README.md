@@ -65,16 +65,21 @@ cd test && bash test.sh
 ```
 linux-virtblk
 ├── .github/
-│   ├── CODEOWNERS              - владельцы кода
+│   ├── CODEOWNERS                     - владельцы кода
 │   └── workflows/
-│       ├── build-and-lint.yml  - сборка и проверка стиля кода (CI)
-│       └── test.yml            - запуск тестов (self-hosted runner)
+│       ├── lint.yml                   - сборка и проверка стиля кода (CI)
+│       └── test.yml                   - запуск тестов (self-hosted runner)
+├── scripts/
+│   └── checkpatch/
+│       ├── checkpatch.pl              - скрипт проверки стиля кода
+│       ├── spelling.txt               - словарь опечаток
+│       └── const_structs.checkpatch   - список константных структур
 ├── src/
-│   ├── virtblk.c               - исходный код модуля
-│   └── Makefile                - сборка модуля
+│   ├── virtblk.c                      - исходный код модуля
+│   └── Makefile                       - сборка модуля
 ├── test/
-│   └── test.sh                 - тесты устройства
-├── .gitignore                  - игнорируемые файлы
-├── LICENSE                     - лицензия
-└── README.md                   - этот файл
+│   └── test.sh                        - тесты устройства
+├── .gitignore                         - игнорируемые файлы
+├── LICENSE                            - лицензия
+└── README.md                          - документация проекта
 ```
