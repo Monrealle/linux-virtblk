@@ -130,13 +130,12 @@ static void ram_virtblk_release(struct gendisk *gd)
 	pr_info("%s: device released\n", DEVICE_NAME);
 }
 
-/**< Таблица операций блочного устройства. */
 static const struct block_device_operations ram_virtblk_ops = {
 	.owner = THIS_MODULE,
 	.open = ram_virtblk_open,
 	.release = ram_virtblk_release,
 	.submit_bio	= ram_virtblk_submit_bio,
-};
+}; /**< Таблица операций блочного устройства. */
 
 /**
  * ram_virtblk_init() - инициализация модуля
