@@ -19,8 +19,7 @@ HAVE_DOT = YES
 GENERATE_TREEVIEW = YES
 DISABLE_INDEX = NO
 FULL_SIDEBAR = NO
-HTML_EXTRA_STYLESHEET = assets/doxygen-awesome.css \
-                        assets/custom.css
+HTML_EXTRA_STYLESHEET = assets/doxygen-awesome.css
 HTML_HEADER = assets/header.html
 HTML_FOOTER = assets/footer.html
 HTML_EXTRA_FILES = assets/doxygen-awesome-darkmode-toggle.js \
