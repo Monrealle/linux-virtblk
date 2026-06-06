@@ -18,3 +18,12 @@ EXTRACT_STATIC = YES
 QUIET = YES
 WARN_AS_ERROR = NO
 WARN_IF_UNDOCUMENTED = YES
+
+PREDEFINED = __init= \
+             __exit= \
+             MODULE_LICENSE(x)= \
+             MODULE_AUTHOR(x)= \
+             MODULE_DESCRIPTION(x)= \
+             MODULE_VERSION(x)= \
+             module_init(x)= \
+             module_exit(x)=

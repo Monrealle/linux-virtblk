@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-2.0
-/*
- * virtblk.c — RAM блочное устройство для ядра Linux 6.18.13-200.fc43.x86_64
+/**
+ * @file virtblk.c
+ * @brief RAM блочное устройство для ядра Linux.
  *
  * Модуль регистрирует виртуальное блочное устройство /dev/ram_virtblk,
  * которое хранит данные в оперативной памяти (64 MiB, 131072 секторов по 512 байт).
  * Запись и чтение реализованы через BIO-based API (submit_bio) —
  * без request queue и blk-mq, напрямую через memcpy в/из RAM-буфера.
+ * 
+ * @author Monreale
+ * @version 1.0
+ * @license GPL-2.0
  */
 
 #include <linux/module.h>      /* Макросы MODULE_LICENSE, module_init, module_exit                        */
@@ -27,21 +32,15 @@ MODULE_AUTHOR("Monreale");
 MODULE_DESCRIPTION("RAM block device");
 MODULE_VERSION("1.0");
 
-/*
- *  Глобальное состояние
- *
- *  Major говорит, какой драйвер обслуживает устройство
- *  Minor говорит, какое конкретно устройство этого драйвера
- */
-static int major;		           /* Номер типа устройства                         */
-static u8 *ram_data;		       /* Указатель на наш RAM-буфер                    */
-static struct gendisk *ram_disk;   /* Главная структура, представляющая диск в ядре */
+static int major;		           /**< major-номер драйвера, выдаётся ядром при регистрации */
+static u8 *ram_data;		       /**< RAM-буфер, хранящий данные устройства                */
+static struct gendisk *ram_disk;   /**< главная структура, представляющая диск в ядре        */
 
 /**
  * ram_virtblk_transfer() - скопировать данные между bio_vec и RAM-буфером
- * @bvec:   дескриптор одного сегмента BIO (страница, смещение, длина)
- * @offset: байтовое смещение в RAM-буфере устройства
- * @write:  true — запись в RAM, false — чтение из RAM
+ * @param bvec: дескриптор одного сегмента BIO (страница, смещение, длина)
+ * @param offset: байтовое смещение в RAM-буфере устройства
+ * @param write: true — запись в RAM, false — чтение из RAM
  *
  * Маппит физическую страницу через kmap_local_page(), выполняет memcpy()
  * и сразу размаппирует. Вызывается для каждого сегмента из
@@ -65,7 +64,7 @@ static void ram_virtblk_transfer(struct bio_vec bvec, loff_t offset, bool write)
 
 /**
  * ram_virtblk_submit_bio() - точка входа всех I/O запросов к устройству
- * @bio: указатель на BIO-запрос от блочного слоя ядра
+ * @param bio: указатель на BIO-запрос от блочного слоя ядра
  *
  * Вычисляет байтовое смещение из номера сектора, проверяет что запрос
  * не выходит за пределы устройства, затем обходит сегменты BIO через
@@ -107,8 +106,8 @@ static void ram_virtblk_submit_bio(struct bio *bio)
 
 /**
  * ram_virtblk_open() - обработчик открытия блочного устройства
- * @gd: указатель на gendisk устройства
- * @mode: режим открытия (BLK_OPEN_READ, BLK_OPEN_WRITE и др.)
+ * @param gd: указатель на gendisk устройства
+ * @param mode: режим открытия (BLK_OPEN_READ, BLK_OPEN_WRITE и др.)
  *
  * Логирует событие в dmesg. Дополнительная инициализация не требуется,
  * так как устройство полностью готово к работе после загрузки модуля.
@@ -123,7 +122,7 @@ static int ram_virtblk_open(struct gendisk *gd, blk_mode_t mode)
 
 /**
  * ram_virtblk_release() - обработчик закрытия блочного устройства
- * @gd: указатель на gendisk устройства
+ * @param gd: указатель на gendisk устройства
  *
  * Логирует событие в dmesg. Освобождение ресурсов не требуется —
  * RAM-буфер живёт до выгрузки модуля.
@@ -133,6 +132,7 @@ static void ram_virtblk_release(struct gendisk *gd)
 	pr_info("%s: device released\n", DEVICE_NAME);
 }
 
+/** @brief Таблица операций блочного устройства. */
 static const struct block_device_operations ram_virtblk_ops = {
 	.owner = THIS_MODULE,
 	.open = ram_virtblk_open,
