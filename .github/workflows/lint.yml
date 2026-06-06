@@ -66,7 +66,7 @@ jobs:
         - name: Install Doxygen
           run: |
             sudo apt-get update
-            sudo apt-get install -y doxygen
+            sudo apt-get install -y doxygen graphviz
 
         - name: Generate documentation
           run: doxygen Doxyfile
