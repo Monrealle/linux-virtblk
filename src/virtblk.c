@@ -7,10 +7,9 @@
  * которое хранит данные в оперативной памяти (64 MiB, 131072 секторов по 512 байт).
  * Запись и чтение реализованы через BIO-based API (submit_bio) —
  * без request queue и blk-mq, напрямую через memcpy в/из RAM-буфера.
- * 
+ *
  * @author Monreale
  * @version 1.0
- * @license GPL-2.0
  */
 #include <linux/module.h>      /* Макросы MODULE_LICENSE, module_init, module_exit                        */
 #include <linux/kernel.h>      /* pr_info, pr_err и базовые типы ядра                                     */
