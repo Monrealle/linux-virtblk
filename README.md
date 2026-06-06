@@ -67,7 +67,7 @@ linux-virtblk
 ├── .github/
 │   ├── CODEOWNERS                     - владельцы кода
 │   └── workflows/
-│       ├── lint.yml                   - сборка и проверка стиля кода (CI)
+│       ├── lint.yml                   - линтинг и генерация документации (CI)
 │       └── test.yml                   - запуск тестов (self-hosted runner)
 ├── scripts/
 │   └── checkpatch/
@@ -76,10 +76,12 @@ linux-virtblk
 │       └── const_structs.checkpatch   - список константных структур
 ├── src/
 │   ├── virtblk.c                      - исходный код модуля
+│   ├── virtblk.h                      - константы и параметры устройства
 │   └── Makefile                       - сборка модуля
 ├── test/
 │   └── test.sh                        - тесты устройства
 ├── .gitignore                         - игнорируемые файлы
+├── Doxyfile                           - конфигурация генератора документации
 ├── LICENSE                            - лицензия
 └── README.md                          - документация проекта
 ```

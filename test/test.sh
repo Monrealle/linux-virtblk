@@ -8,12 +8,17 @@ cleanup() {
     sudo umount /mnt/ramtest 2>/dev/null || true
     sudo rmmod virtblk 2>/dev/null || true
     sudo rm -f /tmp/snapshot.bin || true
+    sudo rm -f /tmp/random.bin || true
 }
 trap cleanup EXIT
 
 echo "===== Загрузка модуля ====="
 sudo insmod "$MODULE"
-sleep 1
+for i in $(seq 1 10); do
+    [ -b "$DEVICE" ] && break
+    sleep 0.5
+done
+[ -b "$DEVICE" ] || { echo "FAIL: device did not appear"; exit 1; }
 
 echo "===== Test 1: базовый write/read ====="
 echo -n "Hello world!" | sudo dd of="$DEVICE" bs=512 count=1 2>/dev/null
@@ -40,9 +45,18 @@ else
 fi
 
 echo "===== Test 3: целостность данных ====="
-sudo dd if=/dev/urandom of="$DEVICE" bs=4096 count=256 2>/dev/null
-sudo dd if="$DEVICE" of=/tmp/snapshot.bin bs=4096 count=256 2>/dev/null
-sudo dd if="$DEVICE" bs=4096 count=256 2>/dev/null | diff - /tmp/snapshot.bin \
+sudo dd if=/dev/urandom of=/tmp/random.bin bs=4096 count=256 2>/dev/null
+sudo dd if=/tmp/random.bin of="$DEVICE" bs=4096 count=256 2>/dev/null
+sudo dd if="$DEVICE" bs=4096 count=256 2>/dev/null | diff - /tmp/random.bin \
     && echo "OK: Test 3" || { echo "FAIL: data mismatch"; exit 1; }
+
+echo "===== Test 4: запрос за пределами устройства ====="
+sudo dd if=/dev/zero of="$DEVICE" bs=512 seek=$((131072 + 1)) count=1 2>/dev/null || true
+if dmesg | tail -20 | grep -q "I/O out of range"; then
+    echo "OK: Test 4"
+else
+    echo "FAIL: out-of-range error not detected"
+    exit 1
+fi
 
 echo "===== Все тесты пройдены ====="

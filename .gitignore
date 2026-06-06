@@ -13,3 +13,6 @@ Module.symvers
 
 # IDE
 .vscode/
+
+# Doxyfile
+docs/

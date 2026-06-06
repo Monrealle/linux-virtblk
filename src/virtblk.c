@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: GPL-2.0
+/* SPDX-License-Identifier: GPL-2.0 */
 /*
  * virtblk.c — RAM блочное устройство для ядра Linux 6.18.13-200.fc43.x86_64
  *
  * Модуль регистрирует виртуальное блочное устройство /dev/ram_virtblk,
- * которое хранит данные в оперативной памяти (1 MiB, 2048 секторов по 512 байт).
+ * которое хранит данные в оперативной памяти (64 MiB, 131072 секторов по 512 байт).
  * Запись и чтение реализованы через BIO-based API (submit_bio) —
  * без request queue и blk-mq, напрямую через memcpy в/из RAM-буфера.
  */
@@ -16,12 +16,11 @@
 #include <linux/blk_types.h>   /* Типы bio, bio_vec, SECTOR_SIZE, op_is_write...                          */
 #include <linux/vmalloc.h>     /* vzalloc/vfree — выделение памяти > 1 страницы                           */
 #include <linux/string.h>      /* memcpy, snprintf                                                        */
+#include "virtblk.h"
 
 /*
- *  ------------------------------------------------------------------
  *  Макросы, которые записывают строки прямо в секцию .modinfo скомпилированного .ko файла
  *  Можно посмотреть командой modinfo virtblk.ko
- *  ------------------------------------------------------------------
  */
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Monreale");
@@ -29,41 +28,24 @@ MODULE_DESCRIPTION("RAM block device");
 MODULE_VERSION("1.0");
 
 /*
- *  ------------------------------------------------------------------
- *  Параметры устройства
- *
- *  SECTOR_SIZE уже определён в <linux/blk_types.h> как (1 << SECTOR_SHIFT), где SECTOR_SHIFT = 9, то есть 2^9 = 512
- *  Используем его напрямую, не переопределяем
- *  ------------------------------------------------------------------
- */
-#define DEVICE_NAME	"ram_virtblk"
-#define NSECTORS 131072		                  /* количество секторов     */
-#define DEVICE_SIZE	(NSECTORS * SECTOR_SIZE)  /* = 131072 * 512 = 64 MiB */
-
-/*
- *  ------------------------------------------------------------------
  *  Глобальное состояние
  *
  *  Major говорит, какой драйвер обслуживает устройство
  *  Minor говорит, какое конкретно устройство этого драйвера
- *  ------------------------------------------------------------------
- */
+*/
 static int major;		           /* Номер типа устройства                         */
-static u8 *ram_data;		       /* указатель на наш RAM-буфер                    */
-static struct gendisk *ram_disk;   /* главная структура, представляющая диск в ядре */
+static u8 *ram_data;		       /* Указатель на наш RAM-буфер                    */
+static struct gendisk *ram_disk;   /* Главная структура, представляющая диск в ядре */
 
-/*
- *  ------------------------------------------------------------------
- *  Функция ram_virtblk_transfer - копирование данных
- *  При записи копируем из буфера пользователя в наш RAM, при чтении - наоборот
+/**
+ * ram_virtblk_transfer() - скопировать данные между bio_vec и RAM-буфером
+ * @bvec:   дескриптор одного сегмента BIO (страница, смещение, длина)
+ * @offset: байтовое смещение в RAM-буфере устройства
+ * @write:  true — запись в RAM, false — чтение из RAM
  *
- *  Внутри bio лежит массив bio_vec - каждый bio_vec описывает один кусок памяти пользователя
- *  struct bio_vec {
- *		struct page *bv_page;    - физическая страница памяти
- *		unsigned int bv_len;     - сколько байт в этом куске
- *		unsigned int bv_offset;  - отступ от начала страницы
- *  };
- *  ------------------------------------------------------------------
+ * Маппит физическую страницу через kmap_local_page(), выполняет memcpy()
+ * и сразу размаппирует. Вызывается для каждого сегмента из
+ * ram_virtblk_submit_bio().
  */
 static void ram_virtblk_transfer(struct bio_vec bvec, loff_t offset, bool write)
 {
@@ -81,10 +63,16 @@ static void ram_virtblk_transfer(struct bio_vec bvec, loff_t offset, bool write)
 	kunmap_local(buf - bvec.bv_offset);
 }
 
-/*
- *  ------------------------------------------------------------------
- *  ram_virtblk_submit_bio - точка входа всех I/O запросов
- *  ------------------------------------------------------------------
+/**
+ * ram_virtblk_submit_bio() - точка входа всех I/O запросов к устройству
+ * @bio: указатель на BIO-запрос от блочного слоя ядра
+ *
+ * Вычисляет байтовое смещение из номера сектора, проверяет что запрос
+ * не выходит за пределы устройства, затем обходит сегменты BIO через
+ * bio_for_each_segment() и для каждого вызывает ram_virtblk_transfer().
+ * Завершает запрос вызовом bio_endio().
+ *
+ * Контекст: процесс-контекст, может спать.
  */
 static void ram_virtblk_submit_bio(struct bio *bio)
 {
@@ -117,12 +105,15 @@ static void ram_virtblk_submit_bio(struct bio *bio)
 	bio_endio(bio); /* говорим ядру "запрос выполнен" */
 }
 
-/*
- *  ------------------------------------------------------------------
- *  ram_virtblk_open, ram_virtblk_release - вызываются когда кто-то открывает/закрывает /dev/ram_virtblk
+/**
+ * ram_virtblk_open() - обработчик открытия блочного устройства
+ * @disk: указатель на gendisk устройства
+ * @mode: режим открытия (BLK_OPEN_READ, BLK_OPEN_WRITE и др.)
  *
- *  У нас нет никакой логики - просто логируем в dmesg
- *  ------------------------------------------------------------------
+ * Логирует событие в dmesg. Дополнительная инициализация не требуется,
+ * так как устройство полностью готово к работе после загрузки модуля.
+ *
+ * Return: всегда 0 (успех).
  */
 static int ram_virtblk_open(struct gendisk *disk, blk_mode_t mode)
 {
@@ -130,19 +121,18 @@ static int ram_virtblk_open(struct gendisk *disk, blk_mode_t mode)
 	return 0;
 }
 
+/**
+ * ram_virtblk_release() - обработчик закрытия блочного устройства
+ * @disk: указатель на gendisk устройства
+ *
+ * Логирует событие в dmesg. Освобождение ресурсов не требуется —
+ * RAM-буфер живёт до выгрузки модуля.
+ */
 static void ram_virtblk_release(struct gendisk *disk)
 {
 	pr_info("%s: device released\n", DEVICE_NAME);
 }
 
-/*
- *  ------------------------------------------------------------------
- *  Таблица операций
- *
- *  THIS_MODULE - указатель на текущий модуль.
- *  Ядро использует его чтобы не выгружать модуль пока устройство открыто
- *  ------------------------------------------------------------------
- */
 static const struct block_device_operations ram_virtblk_ops = {
 	.owner = THIS_MODULE,
 	.open = ram_virtblk_open,
@@ -150,10 +140,18 @@ static const struct block_device_operations ram_virtblk_ops = {
 	.submit_bio	= ram_virtblk_submit_bio,
 };
 
-/*
- *  ------------------------------------------------------------------
- *  Инициализация - ram_virtblk_init
- *  ------------------------------------------------------------------
+/**
+ * ram_virtblk_init() - инициализация модуля
+ *
+ * Выполняет последовательно:
+ *   1. vzalloc() — выделение RAM-буфера под данные устройства;
+ *   2. register_blkdev() — регистрация драйвера, получение major-номера;
+ *   3. blk_alloc_disk() — создание struct gendisk с заданными queue_limits;
+ *   4. настройка полей gendisk и регистрация диска через add_disk().
+ *
+ * При ошибке на любом шаге откатывает все предыдущие шаги через goto.
+ *
+ * Return: 0 при успехе, отрицательный код ошибки при неудаче.
  */
 static int __init ram_virtblk_init(void)
 {
@@ -223,10 +221,11 @@ err_free_ram:
 	return ret;
 }
 
-/*
- *  ------------------------------------------------------------------
- *  Выгрузка - ram_virtblk_exit
- *  ------------------------------------------------------------------
+/**
+ * ram_virtblk_exit() - выгрузка модуля
+ *
+ * Откатывает все шаги инициализации в обратном порядке:
+ * del_gendisk() -> put_disk() -> unregister_blkdev() -> vfree().
  */
 static void __exit ram_virtblk_exit(void)
 {
@@ -237,10 +236,6 @@ static void __exit ram_virtblk_exit(void)
 	pr_info("%s: unloaded\n", DEVICE_NAME);
 }
 
-/*
- *  ------------------------------------------------------------------
- *  Регистрация точек входа
- *  ------------------------------------------------------------------
- */
+/* Регистрация точек входа */
 module_init(ram_virtblk_init);
 module_exit(ram_virtblk_exit);
