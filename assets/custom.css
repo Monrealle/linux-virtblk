@@ -2440,3 +2440,25 @@ details[open]>summary::before {
 	font-size: 80%;
 }
 
+/* Фикс для тёмной темы: заголовок проекта и подзаголовок */
+html.dark-mode #projectname,
+html.dark-mode #projectbrief,
+html.dark-mode #projectnumber {
+    color: #f0f0f0 !important;
+}
+
+/* Если в каком-то месте используется .title (например, на страницах групп) */
+html.dark-mode .title {
+    color: #dddddd !important;
+}
+
+/* Для подписей внутри заголовков (если есть вторичный текст) */
+html.dark-mode .subtitle {
+    color: #cccccc !important;
+}
+
+/* Для ссылки на главную (если она там же) */
+html.dark-mode #projectname a,
+html.dark-mode #projectname a:visited {
+    color: #90A5CE !important;
+}
