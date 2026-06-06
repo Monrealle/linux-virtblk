@@ -32,7 +32,7 @@ MODULE_VERSION("1.0");
 
 static int major;		           /**< major-номер драйвера, выдаётся ядром при регистрации */
 static u8 *ram_data;		       /**< RAM-буфер, хранящий данные устройства                */
-static struct gendisk *ram_disk;   /**< главная структура, представляющая диск в ядре        */
+static struct gendisk *ram_disk;   /**< Главная структура, представляющая диск в ядре        */
 
 /**
  * ram_virtblk_transfer() - скопировать данные между bio_vec и RAM-буфером
