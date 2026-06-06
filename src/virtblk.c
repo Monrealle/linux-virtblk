@@ -107,7 +107,7 @@ static void ram_virtblk_submit_bio(struct bio *bio)
 
 /**
  * ram_virtblk_open() - обработчик открытия блочного устройства
- * @disk: указатель на gendisk устройства
+ * @gd: указатель на gendisk устройства
  * @mode: режим открытия (BLK_OPEN_READ, BLK_OPEN_WRITE и др.)
  *
  * Логирует событие в dmesg. Дополнительная инициализация не требуется,
@@ -115,7 +115,7 @@ static void ram_virtblk_submit_bio(struct bio *bio)
  *
  * Return: всегда 0 (успех).
  */
-static int ram_virtblk_open(struct gendisk *disk, blk_mode_t mode)
+static int ram_virtblk_open(struct gendisk *gd, blk_mode_t mode)
 {
 	pr_info("%s: device opened\n", DEVICE_NAME);
 	return 0;
@@ -123,12 +123,12 @@ static int ram_virtblk_open(struct gendisk *disk, blk_mode_t mode)
 
 /**
  * ram_virtblk_release() - обработчик закрытия блочного устройства
- * @disk: указатель на gendisk устройства
+ * @gd: указатель на gendisk устройства
  *
  * Логирует событие в dmesg. Освобождение ресурсов не требуется —
  * RAM-буфер живёт до выгрузки модуля.
  */
-static void ram_virtblk_release(struct gendisk *disk)
+static void ram_virtblk_release(struct gendisk *gd)
 {
 	pr_info("%s: device released\n", DEVICE_NAME);
 }
