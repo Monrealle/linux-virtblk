@@ -27,3 +27,8 @@ PREDEFINED = __init= \
              MODULE_VERSION(x)= \
              module_init(x)= \
              module_exit(x)=
+
+HIDE_UNDOC_MEMBERS = NO
+ENABLED_SECTIONS =
+MACRO_EXPANSION = YES
+EXPAND_ONLY_PREDEF = YES
