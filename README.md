@@ -65,8 +65,8 @@ cd test && bash test.sh
 
 ## Документация
 
-Документация генерируется автоматически из исходного кода через Doxygen
-при каждом пуше и публикуется на GitHub Pages:
+Документация генерируется автоматически из исходного кода через [Doxygen](https://www.doxygen.nl/)
+при каждом пуше и публикуется на GitHub Pages. Тема оформления — [Doxygen Awesome](https://github.com/jothepro/doxygen-awesome-css).
 
 [monrealle.github.io/linux-virtblk](https://monrealle.github.io/linux-virtblk/)
 
@@ -74,22 +74,28 @@ cd test && bash test.sh
 
 ```
 linux-virtblk
-├── .github/
+├── .github/                           - конфигурация GitHub
 │   ├── CODEOWNERS                     - владельцы кода
-│   └── workflows/
+│   └── workflows/                     - CI/CD пайплайны
 │       ├── lint.yml                   - линтинг и генерация документации (CI)
 │       └── test.yml                   - запуск тестов (self-hosted runner)
-├── scripts/
-│   └── checkpatch/
+│
+├── assets/                            - статические ресурсы
+│   └── doxygen-awesome.css            - тема оформления документации
+│
+├── scripts/                           - вспомогательные скрипты
+│   └── checkpatch/                    - проверка стиля кода ядра Linux
 │       ├── checkpatch.pl              - скрипт проверки стиля кода
 │       ├── spelling.txt               - словарь опечаток
 │       └── const_structs.checkpatch   - список константных структур
-├── src/
+│
+├── src/                               - исходный код модуля
 │   ├── virtblk.c                      - исходный код модуля
 │   ├── virtblk.h                      - константы и параметры устройства
 │   └── Makefile                       - сборка модуля
-├── test/
-│   └── test.sh                        - тесты устройства
+│
+├── test/                              - тесты устройства
+│   └── test.sh                        - интеграционные тесты
 │
 ├── .gitignore                         - игнорируемые файлы
 ├── Doxyfile                           - конфигурация генератора документации
