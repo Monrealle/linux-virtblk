@@ -81,7 +81,6 @@ linux-virtblk
 │       └── test.yml                              - запуск тестов (self-hosted runner)
 │
 ├── assets/                                       - статические ресурсы для Doxygen
-│   ├── custom.css                                - пользовательские переопределения стилей
 │   ├── doxygen-awesome-darkmode-toggle.js        - кнопка переключения тёмной/светлой темы
 │   ├── doxygen-awesome-fragment-copy-button.js   - копирование блоков кода
 │   ├── doxygen-awesome-interactive-toc.js        - подсветка текущего раздела в оглавлении
