@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+// SPDX-License-Identifier: GPL-2.0
 /*
  * virtblk.c — RAM блочное устройство для ядра Linux 6.18.13-200.fc43.x86_64
  *
@@ -32,7 +32,7 @@ MODULE_VERSION("1.0");
  *
  *  Major говорит, какой драйвер обслуживает устройство
  *  Minor говорит, какое конкретно устройство этого драйвера
-*/
+ */
 static int major;		           /* Номер типа устройства                         */
 static u8 *ram_data;		       /* Указатель на наш RAM-буфер                    */
 static struct gendisk *ram_disk;   /* Главная структура, представляющая диск в ядре */
