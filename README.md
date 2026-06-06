@@ -3,7 +3,7 @@
 
 ![CI](https://github.com/Monrealle/linux-virtblk/actions/workflows/lint.yml/badge.svg)
 [![Docs](https://img.shields.io/badge/docs-github%20pages-blue)](https://monrealle.github.io/linux-virtblk/)
-![License](https://img.shields.io/github/license/Monrealle/linux-virtblk)
+[![License](https://img.shields.io/github/license/Monrealle/linux-virtblk)](https://github.com/Monrealle/linux-virtblk/blob/main/LICENSE)
 
 ## Описание
 Модуль ядра Linux, реализующий виртуальное блочное устройство `/dev/ram_virtblk`, которое хранит данные в оперативной памяти. Устройство ведёт себя как обычный диск: поддерживает форматирование, монтирование и файловые операции — данные при этом хранятся в RAM и теряются при выгрузке модуля.
