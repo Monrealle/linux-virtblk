@@ -19,11 +19,11 @@ GENERATE_TREEVIEW = YES
 DISABLE_INDEX = NO
 FULL_SIDEBAR = NO
 HTML_EXTRA_STYLESHEET = assets/doxygen-awesome.css
-HTML_EXTRA_FILES = assets/doxygen-awesome-darkmode-toggle.js \
-                   assets/doxygen-awesome-fragment-copy-button.js \
-                   assets/doxygen-awesome-interactive-toc.js \
-                   assets/doxygen-awesome-paragraph-link.js
-
+HTML_HEADER           = assets/header.html
+HTML_EXTRA_FILES      = assets/doxygen-awesome-darkmode-toggle.js \
+                        assets/doxygen-awesome-fragment-copy-button.js \
+                        assets/doxygen-awesome-interactive-toc.js \
+                        assets/doxygen-awesome-paragraph-link.js
 
 INLINE_SOURCES = NO
 OPTIMIZE_OUTPUT_FOR_C = YES
