@@ -12,7 +12,6 @@
  * @version 1.0
  * @license GPL-2.0
  */
-
 #include <linux/module.h>      /* Макросы MODULE_LICENSE, module_init, module_exit                        */
 #include <linux/kernel.h>      /* pr_info, pr_err и базовые типы ядра                                     */
 #include <linux/init.h>        /* Атрибуты __init и __exit                                                */

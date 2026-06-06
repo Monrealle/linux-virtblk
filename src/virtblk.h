@@ -7,7 +7,6 @@
  * @version 1.0
  * @license GPL-2.0
  */
- 
 #ifndef VIRTBLK_H
 #define VIRTBLK_H
 
