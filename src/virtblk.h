@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+// SPDX-License-Identifier: GPL-2.0 */
 /**
  * @file virtblk.h
  * @brief Константы и параметры виртуального блочного устройства.
