@@ -2,8 +2,9 @@ PROJECT_NAME = "Linux Virtual Block Device Module"
 PROJECT_NUMBER = 1.0
 OUTPUT_LANGUAGE = Russian
 PROJECT_BRIEF = "Virtual RAM block device kernel module"
+USE_MDFILE_AS_MAINPAGE = README.md
 
-INPUT = src
+INPUT = src README.md
 RECURSIVE = NO
 FILE_PATTERNS = *.c *.h
 
@@ -18,6 +19,10 @@ EXTRACT_STATIC = YES
 QUIET = YES
 WARN_AS_ERROR = NO
 WARN_IF_UNDOCUMENTED = YES
+HIDE_UNDOC_MEMBERS = NO
+ENABLED_SECTIONS =
+MACRO_EXPANSION = YES
+EXPAND_ONLY_PREDEF = YES
 
 PREDEFINED = __init= \
              __exit= \
@@ -27,8 +32,3 @@ PREDEFINED = __init= \
              MODULE_VERSION(x)= \
              module_init(x)= \
              module_exit(x)=
-
-HIDE_UNDOC_MEMBERS = NO
-ENABLED_SECTIONS =
-MACRO_EXPANSION = YES
-EXPAND_ONLY_PREDEF = YES
