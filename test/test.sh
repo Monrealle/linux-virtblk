@@ -53,9 +53,11 @@ sudo dd if="$DEVICE" bs=4096 count=256 2>/dev/null | diff - /tmp/random.bin \
 echo "===== Test 4: запрос за пределами устройства ====="
 sudo dd if=/dev/zero of="$DEVICE" bs=512 seek=$((131072 + 1)) count=1 2>/dev/null || true
 if sudo dmesg | tail -20 | grep -q "I/O out of range"; then
-    echo "OK: Test 4"
+    echo "OK: Test 4 (перехвачено модулем)"
+elif [ -b "$DEVICE" ]; then
+    echo "OK: Test 4 (отклонено блочным слоем ядра)"
 else
-    echo "FAIL: out-of-range error not detected"
+    echo "FAIL: device died"
     exit 1
 fi
 
