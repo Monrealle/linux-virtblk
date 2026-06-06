@@ -1,10 +1,11 @@
 PROJECT_NAME = "Linux Virtual Block Device Module"
 PROJECT_NUMBER = 1.0
+INPUT_ENCODING = UTF-8
 OUTPUT_LANGUAGE = Russian
 PROJECT_BRIEF = "Virtual RAM block device kernel module"
 USE_MDFILE_AS_MAINPAGE = README.md
 
-INPUT = src assets README.md
+INPUT = src README.md
 RECURSIVE = NO
 FILE_PATTERNS = *.c *.h
 SOURCE_BROWSER = YES
@@ -18,12 +19,15 @@ HAVE_DOT = YES
 GENERATE_TREEVIEW = YES
 DISABLE_INDEX = NO
 FULL_SIDEBAR = NO
-HTML_EXTRA_STYLESHEET = assets/doxygen-awesome.css
-HTML_HEADER           = assets/header.html
-HTML_EXTRA_FILES      = assets/doxygen-awesome-darkmode-toggle.js \
-                        assets/doxygen-awesome-fragment-copy-button.js \
-                        assets/doxygen-awesome-interactive-toc.js \
-                        assets/doxygen-awesome-paragraph-link.js
+HTML_EXTRA_STYLESHEET = assets/doxygen-awesome.css \
+                        assets/custom.css
+HTML_HEADER = assets/header.html
+HTML_FOOTER = assets/footer.html
+HTML_EXTRA_FILES = assets/doxygen-awesome-darkmode-toggle.js \
+                   assets/doxygen-awesome-fragment-copy-button.js \
+                   assets/doxygen-awesome-interactive-toc.js \
+                   assets/doxygen-awesome-paragraph-link.js
+EXCLUDE = assets/custom.css.bak
 
 INLINE_SOURCES = NO
 OPTIMIZE_OUTPUT_FOR_C = YES

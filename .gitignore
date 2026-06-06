@@ -16,3 +16,6 @@ Module.symvers
 
 # Doxyfile
 docs/
+
+# CSS
+*.css.bak

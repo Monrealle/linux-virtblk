@@ -74,31 +74,39 @@ cd test && bash test.sh
 
 ```
 linux-virtblk
-├── .github/                           - конфигурация GitHub
-│   ├── CODEOWNERS                     - владельцы кода
-│   └── workflows/                     - CI/CD пайплайны
-│       ├── lint.yml                   - линтинг и генерация документации (CI)
-│       └── test.yml                   - запуск тестов (self-hosted runner)
+├── .github/                                      - конфигурация GitHub
+│   ├── CODEOWNERS                                - владельцы кода
+│   └── workflows/                                - CI/CD пайплайны
+│       ├── lint.yml                              - линтинг и генерация документации (CI)
+│       └── test.yml                              - запуск тестов (self-hosted runner)
 │
-├── assets/                            - статические ресурсы
-│   └── doxygen-awesome.css            - тема оформления документации
+├── assets/                                       - статические ресурсы для Doxygen
+│   ├── custom.css                                - пользовательские переопределения стилей
+│   ├── doxygen-awesome-darkmode-toggle.js        - кнопка переключения тёмной/светлой темы
+│   ├── doxygen-awesome-fragment-copy-button.js   - копирование блоков кода
+│   ├── doxygen-awesome-interactive-toc.js        - подсветка текущего раздела в оглавлении
+│   ├── doxygen-awesome-paragraph-link.js         - ссылки на параграфы при наведении на заголовок
+│   ├── doxygen-awesome.css                       - основная тема оформления документации
+│   ├── footer.html                               - кастомный нижний колонтитул
+│   ├── header.html                               - кастомный верхний колонтитул страниц документации
+│   └── doxygen-awesome.css                       - тема оформления документации
 │
-├── scripts/                           - вспомогательные скрипты
-│   └── checkpatch/                    - проверка стиля кода ядра Linux
-│       ├── checkpatch.pl              - скрипт проверки стиля кода
-│       ├── spelling.txt               - словарь опечаток
-│       └── const_structs.checkpatch   - список константных структур
+├── scripts/                                      - вспомогательные скрипты
+│   └── checkpatch/                               - проверка стиля кода ядра Linux
+│       ├── checkpatch.pl                         - скрипт проверки стиля кода
+│       ├── spelling.txt                          - словарь опечаток
+│       └── const_structs.checkpatch              - список константных структур
 │
-├── src/                               - исходный код модуля
-│   ├── virtblk.c                      - исходный код модуля
-│   ├── virtblk.h                      - константы и параметры устройства
-│   └── Makefile                       - сборка модуля
+├── src/                                          - исходный код модуля
+│   ├── virtblk.c                                 - исходный код модуля
+│   ├── virtblk.h                                 - константы и параметры устройства
+│   └── Makefile                                  - сборка модуля
 │
-├── test/                              - тесты устройства
-│   └── test.sh                        - интеграционные тесты
+├── test/                                         - тесты устройства
+│   └── test.sh                                   - интеграционные тесты
 │
-├── .gitignore                         - игнорируемые файлы
-├── Doxyfile                           - конфигурация генератора документации
-├── LICENSE                            - лицензия
-└── README.md                          - документация проекта
+├── .gitignore                                    - игнорируемые файлы
+├── Doxyfile                                      - конфигурация генератора документации
+├── LICENSE                                       - лицензия
+└── README.md                                     - документация проекта
 ```
