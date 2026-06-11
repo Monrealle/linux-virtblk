@@ -6,7 +6,7 @@
 [![Release](https://img.shields.io/badge/release-v1.0-blue?style=flat-square)](https://github.com/Monrealle/linux-virtblk/releases)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 ![Language](https://img.shields.io/badge/language-C-555555?style=flat-square&logo=c&logoColor=white)
-![Kernel](https://img.shields.io/badge/kernel-6.18.13--fc43-555555?style=flat-square&logo=linux&logoColor=white)
+![Kernel](https://img.shields.io/badge/kernel-6.18.13--200.fc43.x86__64-555555?style=flat-square&logo=linux&logoColor=white)
 
 ## Описание
 Модуль ядра Linux, реализующий виртуальное блочное устройство `/dev/ram_virtblk`, которое хранит данные в оперативной памяти. Устройство ведёт себя как обычный диск: поддерживает форматирование, монтирование и файловые операции — данные при этом хранятся в RAM и теряются при выгрузке модуля.
