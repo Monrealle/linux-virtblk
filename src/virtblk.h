@@ -9,11 +9,11 @@
 #ifndef VIRTBLK_H
 #define VIRTBLK_H
 
-/** DEVICE_NAME - имя устройства в /dev и в логах ядра */
-#define DEVICE_NAME	"ram_virtblk"
-/** NSECTORS - количество секторов устройства */
-#define NSECTORS 131072
-/** DEVICE_SIZE - полный размер устройства в байтах (131072 * 512 = 64 MiB) */
-#define DEVICE_SIZE	(NSECTORS * SECTOR_SIZE)
+/** RAM_VIRTBLK_NAME - имя устройства в /dev и в логах ядра */
+#define RAM_VIRTBLK_NAME "ram_virtblk"
+/** RAM_VIRTBLK_NSECTORS - количество секторов устройства */
+#define RAM_VIRTBLK_NSECTORS 131072
+/** RAM_VIRTBLK_SIZE - полный размер устройства в байтах (131072 * 512 = 64 MiB) */
+#define RAM_VIRTBLK_SIZE (RAM_VIRTBLK_NSECTORS * RAM_VIRTBLK_SEC_SIZE)
 
 #endif /* VIRTBLK_H */

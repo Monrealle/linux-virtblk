@@ -16,7 +16,7 @@
 #include <linux/init.h>        /* Атрибуты __init и __exit                                                */
 #include <linux/fs.h>          /* Файловая система — нужна для block_device_operations                    */
 #include <linux/blkdev.h>      /* Главный заголовок блочных устройств: gendisk, queue_limits, add_disk... */
-#include <linux/blk_types.h>   /* Типы bio, bio_vec, SECTOR_SIZE, op_is_write...                          */
+#include <linux/blk_types.h>   /* Типы bio, bio_vec, RAM_VIRTBLK_SEC_SIZE, op_is_write...                          */
 #include <linux/vmalloc.h>     /* vzalloc/vfree — выделение памяти > 1 страницы                           */
 #include <linux/string.h>      /* memcpy, snprintf                                                        */
 #include "virtblk.h"
@@ -71,14 +71,14 @@ static void ram_virtblk_submit_bio(struct bio *bio)
 	/* Умножаем на 512 чтобы получить байтовый offset в нашем буфере    */
 	/* bio_op(bio) возвращает операцию: REQ_OP_READ, REQ_OP_WRITE и т.д */
 	/* op_is_write() проверяет является ли операция записью             */
-	loff_t offset = bio->bi_iter.bi_sector * SECTOR_SIZE;
+	loff_t offset = bio->bi_iter.bi_sector * RAM_VIRTBLK_SEC_SIZE;
 	bool write = op_is_write(bio_op(bio));
 
 	/* Защита от запросов за пределы устройства                                                 */
 	/* Если кто-то попросит прочитать сектор 9999 при размере 2048 секторов - возвращаем ошибку */
-	if (offset + bio->bi_iter.bi_size > DEVICE_SIZE) {
+	if (offset + bio->bi_iter.bi_size > RAM_VIRTBLK_SIZE) {
 		pr_err("%s: I/O out of range (offset=%lld, size=%u)\n",
-		       DEVICE_NAME, offset, bio->bi_iter.bi_size);
+		       RAM_VIRTBLK_NAME, offset, bio->bi_iter.bi_size);
 		bio_io_error(bio);
 		return;
 	}
@@ -105,7 +105,7 @@ static void ram_virtblk_submit_bio(struct bio *bio)
  */
 static int ram_virtblk_open(struct gendisk *gd, blk_mode_t mode)
 {
-	pr_info("%s: device opened\n", DEVICE_NAME);
+	pr_info("%s: device opened\n", RAM_VIRTBLK_NAME);
 	return 0;
 }
 
@@ -118,7 +118,7 @@ static int ram_virtblk_open(struct gendisk *gd, blk_mode_t mode)
  */
 static void ram_virtblk_release(struct gendisk *gd)
 {
-	pr_info("%s: device released\n", DEVICE_NAME);
+	pr_info("%s: device released\n", RAM_VIRTBLK_NAME);
 }
 
 static const struct block_device_operations ram_virtblk_ops = {
@@ -147,22 +147,22 @@ static int __init ram_virtblk_init(void)
 	/* logical_block_size - минимальный адресуемый блок с точки зрения файловой системы */
 	/* physical_block_size - реальный размер блока железа. У нас RAM, поэтому оба 512   */
 	struct queue_limits lim = {
-		.logical_block_size = SECTOR_SIZE,
-		.physical_block_size = SECTOR_SIZE,
+		.logical_block_size = RAM_VIRTBLK_SEC_SIZE,
+		.physical_block_size = RAM_VIRTBLK_SEC_SIZE,
 	};
 
 	/* 1. Выделяем RAM под данные                                                                                                */
 	/* vzalloc - выделяет память в виртуально непрерывном адресном пространстве ядра                                             */
 	/* Используем vzalloc а не kmalloc потому что vzalloc не требует физически непрерывной памяти, что важно для больших буферов */
-	ram_data = vzalloc(DEVICE_SIZE);
+	ram_data = vzalloc(RAM_VIRTBLK_SIZE);
 	if (!ram_data)
 		return -ENOMEM;
 
 	/* 2. Регистрируем драйвер в ядре и получаем major номер */
 	/* Результат виден в /proc/devices                       */
-	major = register_blkdev(0, DEVICE_NAME);
+	major = register_blkdev(0, RAM_VIRTBLK_NAME);
 	if (major < 0) {
-		pr_err("%s: failed to register block device\n", DEVICE_NAME);
+		pr_err("%s: failed to register block device\n", RAM_VIRTBLK_NAME);
 		ret = major;
 		goto err_free_ram;
 	}
@@ -172,7 +172,7 @@ static int __init ram_virtblk_init(void)
 	ram_disk = blk_alloc_disk(&lim, NUMA_NO_NODE);
 	if (IS_ERR(ram_disk)) {
 		ret = PTR_ERR(ram_disk);
-		pr_err("%s: failed to allocate disk\n", DEVICE_NAME);
+		pr_err("%s: failed to allocate disk\n", RAM_VIRTBLK_NAME);
 		goto err_unreg_virtblk;
 	}
 
@@ -183,8 +183,8 @@ static int __init ram_virtblk_init(void)
 	ram_disk->minors = 1;                                       /* только одно устройство, без разделов */
 	ram_disk->fops = &ram_virtblk_ops;
 	ram_disk->flags	= GENHD_FL_NO_PART;	                        /* не сканировать таблицу разделов      */
-	snprintf(ram_disk->disk_name, DISK_NAME_LEN, DEVICE_NAME);
-	set_capacity(ram_disk, NSECTORS);
+	snprintf(ram_disk->disk_name, DISK_NAME_LEN, RAM_VIRTBLK_NAME);
+	set_capacity(ram_disk, RAM_VIRTBLK_NSECTORS);
 
 	/* 5. Регистрируем диск в подсистеме блочных устройств                                     */
 	/* Появляется /dev/ram_virtblk и устройство готово к использованию                         */
@@ -192,18 +192,18 @@ static int __init ram_virtblk_init(void)
 	/* goto раскручивает инициализацию в обратном порядке                                      */
 	ret = add_disk(ram_disk);
 	if (ret) {
-		pr_err("%s: failed to add disk\n", DEVICE_NAME);
+		pr_err("%s: failed to add disk\n", RAM_VIRTBLK_NAME);
 		goto err_put_disk;
 	}
 
 	pr_info("%s: loaded, major=%d, size=%d KiB\n",
-		DEVICE_NAME, major, DEVICE_SIZE / 1024);
+		RAM_VIRTBLK_NAME, major, RAM_VIRTBLK_SIZE / 1024);
 	return 0;
 
 err_put_disk:
 	put_disk(ram_disk);
 err_unreg_virtblk:
-	unregister_blkdev(major, DEVICE_NAME);
+	unregister_blkdev(major, RAM_VIRTBLK_NAME);
 err_free_ram:
 	vfree(ram_data);
 	return ret;
@@ -217,11 +217,11 @@ err_free_ram:
  */
 static void __exit ram_virtblk_exit(void)
 {
-	del_gendisk(ram_disk);                    /* убираем диск из системы, удаляет /dev/ram_virtblk */
-	put_disk(ram_disk);                       /* освобождаем struct gendisk (уменьшаем refcount)   */
-	unregister_blkdev(major, DEVICE_NAME);    /* убираем major из /proc/devices                    */
-	vfree(ram_data);                          /* освобождаем RAM-буфер                             */
-	pr_info("%s: unloaded\n", DEVICE_NAME);
+	del_gendisk(ram_disk);                       /* убираем диск из системы, удаляет /dev/ram_virtblk */
+	put_disk(ram_disk);                          /* освобождаем struct gendisk (уменьшаем refcount)   */
+	unregister_blkdev(major, RAM_VIRTBLK_NAME);  /* убираем major из /proc/devices                    */
+	vfree(ram_data);                             /* освобождаем RAM-буфер                             */
+	pr_info("%s: unloaded\n", RAM_VIRTBLK_NAME);
 }
 
 /* Регистрация точек входа */
