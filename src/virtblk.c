@@ -21,15 +21,6 @@
 #include <linux/string.h>      /* memcpy, snprintf                                                        */
 #include "virtblk.h"
 
-/*
- *  Макросы, которые записывают строки прямо в секцию .modinfo скомпилированного .ko файла
- *  Можно посмотреть командой modinfo virtblk.ko
- */
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Monreale");
-MODULE_DESCRIPTION("RAM block device");
-MODULE_VERSION("1.0");
-
 static int major;		           /**< major-номер драйвера, выдаётся ядром при регистрации */
 static u8 *ram_data;		       /**< RAM-буфер, хранящий данные устройства                */
 static struct gendisk *ram_disk;   /**< Главная структура, представляющая диск в ядре        */
@@ -236,3 +227,12 @@ static void __exit ram_virtblk_exit(void)
 /* Регистрация точек входа */
 module_init(ram_virtblk_init);
 module_exit(ram_virtblk_exit);
+
+/*
+ *  Макросы, которые записывают строки прямо в секцию .modinfo скомпилированного .ko файла
+ *  Можно посмотреть командой modinfo virtblk.ko
+ */
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Monreale");
+MODULE_DESCRIPTION("RAM block device");
+MODULE_VERSION("1.0");
