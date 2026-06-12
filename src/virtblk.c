@@ -16,7 +16,7 @@
 #include <linux/init.h>        /* Атрибуты __init и __exit                                                */
 #include <linux/fs.h>          /* Файловая система — нужна для block_device_operations                    */
 #include <linux/blkdev.h>      /* Главный заголовок блочных устройств: gendisk, queue_limits, add_disk... */
-#include <linux/blk_types.h>   /* Типы bio, bio_vec, RAM_VIRTBLK_SEC_SIZE, op_is_write...                          */
+#include <linux/blk_types.h>   /* Типы bio, bio_vec, SECTOR_SIZE, op_is_write...                          */
 #include <linux/vmalloc.h>     /* vzalloc/vfree — выделение памяти > 1 страницы                           */
 #include <linux/string.h>      /* memcpy, snprintf                                                        */
 #include "virtblk.h"

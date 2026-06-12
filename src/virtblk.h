@@ -11,6 +11,8 @@
 
 /** RAM_VIRTBLK_NAME - имя устройства в /dev и в логах ядра */
 #define RAM_VIRTBLK_NAME "ram_virtblk"
+/** RAM_VIRTBLK_SEC_SIZE - размер одного сектора в байтах */
+#define RAM_VIRTBLK_SEC_SIZE 512
 /** RAM_VIRTBLK_NSECTORS - количество секторов устройства */
 #define RAM_VIRTBLK_NSECTORS 131072
 /** RAM_VIRTBLK_SIZE - полный размер устройства в байтах (131072 * 512 = 64 MiB) */
