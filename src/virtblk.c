@@ -83,7 +83,10 @@ static void ram_virtblk_submit_bio(struct bio *bio)
 		return;
 	}
 
-	/* bio_for_each_segment - макрос-итератор                                                  */
+	/* bio_for_each_segment - стандартный итератор для BIO-based драйверов.                    */
+	/* Выбран вместо __bio_for_each_segment, так как автоматически управляет bvec_iter и       */
+	/* корректно обрабатывает многосегментные запросы. __bio_for_each_segment требует          */
+	/* ручного управления итератором и используется только при частичной обработке сегментов.  */
 	/* Обходим каждый bio_vec и копируем данные, сдвигая offset на размер скопированного куска */
 	bio_for_each_segment(bvec, bio, iter) {
 		ram_virtblk_transfer(bvec, offset, write);
