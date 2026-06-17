@@ -3,10 +3,12 @@
 
 [![CI](https://github.com/Monrealle/linux-virtblk/actions/workflows/lint.yml/badge.svg?style=flat-square)](https://github.com/Monrealle/linux-virtblk/actions/workflows/lint.yml)
 [![Docs](https://img.shields.io/badge/docs-github%20pages-blue?style=flat-square)](https://monrealle.github.io/linux-virtblk/)
+[![Report](https://img.shields.io/badge/report-pdf-blue?style=flat-square)](docs/report.pdf)
 [![Release](https://img.shields.io/badge/release-v1.0-blue?style=flat-square)](https://github.com/Monrealle/linux-virtblk/releases)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-orange?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 ![Language](https://img.shields.io/badge/language-C-555555?style=flat-square&logo=c&logoColor=white)
 ![Kernel](https://img.shields.io/badge/kernel-6.18.13--200.fc43.x86__64-555555?style=flat-square&logo=linux&logoColor=white)
+
 
 ## Описание
 Модуль ядра Linux, реализующий виртуальное блочное устройство `/dev/ram_virtblk`, которое хранит данные в оперативной памяти. Устройство ведёт себя как обычный диск: поддерживает форматирование, монтирование и файловые операции — данные при этом хранятся в RAM и теряются при выгрузке модуля.
@@ -85,6 +87,10 @@ cd test && bash test.sh
 
 [monrealle.github.io/linux-virtblk](https://monrealle.github.io/linux-virtblk/)
 
+## Отчёт
+
+Отчёт по учебной практике: [docs/report.pdf](docs/report.pdf)
+
 ## Структура проекта
 
 ```
@@ -103,6 +109,10 @@ linux-virtblk
 │   ├── doxygen-awesome.css                       - основная тема оформления документации
 │   ├── footer.html                               - кастомный нижний колонтитул
 │   └── header.html                               - кастомный верхний колонтитул страниц документации
+│
+├── docs/                                         - документация проекта
+│   ├── report.pdf                                - отчёт по учебной практике
+│   └── report.tex                                - исходник отчёта (LaTeX)
 │
 ├── scripts/                                      - вспомогательные скрипты
 │   ├── install.sh                                - сборка и загрузка модуля одной командой

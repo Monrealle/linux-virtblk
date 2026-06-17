@@ -14,9 +14,6 @@ Module.symvers
 # IDE
 .vscode/
 
-# Doxyfile
-docs/
-
 # CSS
 *.css.bak
 
